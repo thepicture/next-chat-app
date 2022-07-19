@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import AlertDialog from "../components/AlertDialog";
+import "../styles/globals.sass";
 
 const theme = createTheme({
   components: {
@@ -39,9 +39,7 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <>
-        <Component {...pageProps} />
-      </>
+      <Component {...pageProps} />
     </ThemeProvider>
   );
 }
