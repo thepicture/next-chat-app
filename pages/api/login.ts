@@ -1,34 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import db from './../../db/db'
+import Database from 'sqlite-async'
+import seed from './../../db/db'
 
 export type User = {
-  email: string;
-  username: string;
-  password: string;
+  email: string
+  username: string
+  password: string
 }
 
 export type LoginData = {
-  message: string;
-  username?: string;
+  message: string
+  username?: string
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<LoginData>
 ) {
-  const { email, password } = req.body;
-  db.get(`SELECT [username]
-            FROM [users]
-           WHERE [users].[email] = ? 
-             AND [users].[password] = ?
-           LIMIT 1`, [email, password], (err: Error | null, row: User) => {
-    if (err)
-      return res.status(500).send({ message: "Internal server error" })
+  const { email, password } = req.body
+  const db = await Database.open('chatsdb.db')
+  await seed(db)
+  try {
+    const row = await db.get(`SELECT [username]
+                                FROM [users]
+                               WHERE [users].[email] = ? 
+                                 AND [users].[password] = ?
+                               LIMIT 1`, [email, password])
+    if (row)
+      return res.status(200).json({ message: 'OK', username: row.username })
     else
-      if (row)
-        return res.status(200).json({ message: 'OK', username: row.username })
-      else
-        return res.status(401).send({ message: "Unauthorized" })
-  })
+      return res.status(401).send({ message: "Unauthorized" })
+  } catch (error) {
+    return res.status(500).send({ message: "Internal server error" })
+  }
 }

@@ -6,37 +6,36 @@ import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import AlertDialog from "../components/AlertDialog";
 import styles from "../styles/Login.module.sass";
+import { Credentials } from "./login";
 
-export interface Credentials {
-  email: string;
-  password: string;
+export interface RegistrationCredentials extends Credentials {
+  username: string;
 }
-
-export interface LoginCredentials extends Credentials {}
 
 const Login: NextPage = () => {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
-  const [credentials, setCredentials] = useState<LoginCredentials>({
+  const [credentials, setCredentials] = useState<RegistrationCredentials>({
     email: "",
+    username: "",
     password: "",
   });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { type, value } = e.target;
-    setCredentials({ ...credentials, [type]: value });
+    const { name, value } = e.target;
+    setCredentials({ ...credentials, [name]: value });
   };
   const handleLogin = () => {
     axios
-      .post("/api/login", credentials)
+      .post("/api/registration", credentials)
       .then(() => {
         setError(false);
-        setMessage("You are logged in");
+        setMessage("You are registered!");
         setIsOpen(true);
       })
       .catch(() => {
         setError(true);
-        setMessage("Incorrect email or password");
+        setMessage("Cannot register, try again");
         setIsOpen(true);
       });
   };
@@ -48,7 +47,7 @@ const Login: NextPage = () => {
       <div className={styles.container}>
         <Head>
           <title>Login</title>
-          <meta name="description" content="Enter your account" />
+          <meta name="description" content="Enter your new account's info" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Box
@@ -60,23 +59,32 @@ const Login: NextPage = () => {
           <Card sx={{ p: 4 }}>
             <Stack>
               <Typography component="h1" variant="h4">
-                Login
+                Enter your new account's info
               </Typography>
               <TextField
                 onChange={handleChange}
                 error={error}
                 type="email"
+                name="email"
                 placeholder="Email"
               />
               <TextField
                 onChange={handleChange}
                 error={error}
+                type="text"
+                name="username"
+                placeholder="Username"
+              />
+              <TextField
+                onChange={handleChange}
+                error={error}
                 type="password"
+                name="password"
                 placeholder="Password"
               />
-              <Button onClick={handleLogin}>Sign in</Button>
-              <Link href="/registration">
-                <a style={{ textAlign: "center" }}>Don't have an account?</a>
+              <Button onClick={handleLogin}>Register</Button>
+              <Link href="/login">
+                <a style={{ textAlign: "center" }}>I have an account</a>
               </Link>
             </Stack>
           </Card>
