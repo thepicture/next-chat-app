@@ -26,9 +26,16 @@ const Login: NextPage = () => {
         setMessage("You are registered!");
         setIsOpen(true);
       })
-      .catch(() => {
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 409) {
+            setMessage("User with the given email or username exists");
+          } else if (error.response.status === 500) {
+            setMessage("Server error, try to register again");
+          }
+          console.log(error.config);
+        }
         setError(true);
-        setMessage("User with the given email or username exists");
         setIsOpen(true);
       });
   };
@@ -60,8 +67,10 @@ const Login: NextPage = () => {
                 } else if (!emailRegExpPattern.test(values.email)) {
                   errors.email = "Enter valid email address";
                 }
-                if (!values.username) errors.username = "Username required";
-                if (!values.password) errors.password = "Password required";
+                if (!values.username.trim())
+                  errors.username = "Username required";
+                if (!values.password.trim())
+                  errors.password = "Password required without white spaces";
                 else if (values.password.length < 5)
                   errors.password =
                     "Password length must be at least 5 characters long";
