@@ -1,21 +1,14 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const users: Array<User> = [
-  {
-    email: "example@example.com",
-    username: "example",
-    password: "123"
-  },
-];
+import db from './../../db/db'
 
-type User = {
+export type User = {
   email: string;
   username: string;
   password: string;
 }
 
-type LoginData = {
+export type LoginData = {
   message: string;
   username?: string;
 }
@@ -25,9 +18,17 @@ export default function handler(
   res: NextApiResponse<LoginData>
 ) {
   const { email, password } = req.body;
-  const user = users.find(user => user.email === email && user.password === password);
-  if (user)
-    return res.status(200).json({ message: "OK", username: user.username })
-  else
-    return res.status(401).send({ message: "Unauthorized" });
+  db.get(`SELECT [username]
+            FROM [users]
+           WHERE [users].[email] = ? 
+             AND [users].[password] = ?
+           LIMIT 1`, [email, password], (err: Error | null, row: User) => {
+    if (err)
+      return res.status(500).send({ message: "Internal server error" })
+    else
+      if (row)
+        return res.status(200).json({ message: 'OK', username: row.username })
+      else
+        return res.status(401).send({ message: "Unauthorized" })
+  })
 }
