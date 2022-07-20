@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
-import AlertDialog from "../components/AlertDialog";
+import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
 import styles from "../styles/Login.module.sass";
 
 export interface Credentials {
@@ -15,7 +15,8 @@ export interface Credentials {
 export interface LoginCredentials extends Credentials {}
 
 const Login: NextPage = () => {
-  const [message, setMessage] = useState("");
+  const [messageWithCallback, setMessageWithCallback] =
+    useState<MessageWithCallback>({ message: "" });
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -31,12 +32,12 @@ const Login: NextPage = () => {
       .post("/api/login", credentials)
       .then(() => {
         setError(false);
-        setMessage("You are logged in");
+        setMessageWithCallback({ message: "You are logged in" });
         setIsOpen(true);
       })
       .catch(() => {
         setError(true);
-        setMessage("Incorrect email or password");
+        setMessageWithCallback({ message: "Incorrect email or password" });
         setIsOpen(true);
       });
   };
@@ -83,7 +84,7 @@ const Login: NextPage = () => {
         </Box>
       </div>
       <AlertDialog
-        message={message}
+        messageWithCallback={messageWithCallback}
         isOpen={isOpen}
         onClose={handleDialogClose}
       />

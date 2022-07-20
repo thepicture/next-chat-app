@@ -4,10 +4,11 @@ import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
-import AlertDialog from "../components/AlertDialog";
+import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
 import styles from "../styles/Login.module.sass";
 import { Credentials } from "./login";
 import { ErrorMessage, Formik, FormikHelpers, FormikValues } from "formik";
+import { useRouter } from "next/router";
 
 export interface RegistrationCredentials extends Credentials {
   username: string;
@@ -15,7 +16,9 @@ export interface RegistrationCredentials extends Credentials {
 
 const emailRegExpPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const Login: NextPage = () => {
-  const [message, setMessage] = useState("");
+  const router = useRouter();
+  const [messageWithCallback, setMessageWithCallback] =
+    useState<MessageWithCallback>({ message: "" });
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
   const handleRegistration = (values: FormikValues) => {
@@ -23,17 +26,23 @@ const Login: NextPage = () => {
       .post("/api/registration", values)
       .then(() => {
         setError(false);
-        setMessage("You are registered!");
+        setMessageWithCallback({
+          message: "You are registered!",
+          callback: () => router.back(),
+        });
         setIsOpen(true);
       })
       .catch((error) => {
         if (error.response) {
           if (error.response.status === 409) {
-            setMessage("User with the given email or username exists");
+            setMessageWithCallback({
+              message: "User with the given email or username exists",
+            });
           } else if (error.response.status === 500) {
-            setMessage("Server error, try to register again");
+            setMessageWithCallback({
+              message: "Server error, try to register again",
+            });
           }
-          console.log(error.config);
         }
         setError(true);
         setIsOpen(true);
@@ -130,7 +139,7 @@ const Login: NextPage = () => {
         </Box>
       </div>
       <AlertDialog
-        message={message}
+        messageWithCallback={messageWithCallback}
         isOpen={isOpen}
         onClose={handleDialogClose}
       />

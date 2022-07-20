@@ -29,7 +29,6 @@ async function doesUserExistWith(email: any, username: any) {
                                WHERE [users].[email] = ?
                                   OR [users].[username] = ?
                                LIMIT 1`, [email, username])
-    console.log(JSON.stringify(row))
     return row["COUNT([id])"];
 }
 

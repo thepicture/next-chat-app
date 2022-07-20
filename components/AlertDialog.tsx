@@ -8,18 +8,24 @@ import {
 import { FunctionComponent } from "react";
 
 export interface AlertProps {
-  message: string;
+  messageWithCallback: MessageWithCallback;
   isOpen: boolean;
   onClose: () => void;
 }
 
+export interface MessageWithCallback {
+  message: string;
+  callback?: () => void;
+}
+
 const AlertDialog: FunctionComponent<AlertProps> = ({
-  message,
+  messageWithCallback,
   isOpen,
   onClose,
 }: AlertProps) => {
   const handleClose = () => {
     onClose();
+    if (messageWithCallback.callback) messageWithCallback.callback();
   };
 
   return (
@@ -31,7 +37,7 @@ const AlertDialog: FunctionComponent<AlertProps> = ({
     >
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {message}
+          {messageWithCallback.message}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
