@@ -24,14 +24,12 @@ export default async function handler(
 async function doesUserExistWith(email: any, username: any) {
     const db = await Database.open('chatsdb.db')
     await seed(db)
-    const row = await db.get(`SELECT COUNT(*)
+    const row = await db.get(`SELECT COUNT([id])
                                 FROM [users]
                                WHERE [users].[email] = ?
                                   OR [users].[username] = ?
                                LIMIT 1`, [email, username])
-    if (row)
-        return false
-    else
-        return !!row
+    console.log(JSON.stringify(row))
+    return row["COUNT([id])"];
 }
 

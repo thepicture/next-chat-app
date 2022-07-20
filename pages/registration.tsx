@@ -35,7 +35,7 @@ const Login: NextPage = () => {
       })
       .catch(() => {
         setError(true);
-        setMessage("Cannot register, try again");
+        setMessage("User with the given email or username exists");
         setIsOpen(true);
       });
   };
