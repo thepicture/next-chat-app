@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
 import Database from 'sqlite-async'
+import { MessageResponse } from '..'
 import seed from './../../db/db'
 
 export default async function handler(
@@ -24,7 +25,7 @@ export default async function handler(
     if (req.method === 'POST') {
         await post(req, res, userId)
     } else if (req.method === 'GET') {
-        await get(req, res);
+        await get(req, res, userId);
     }
 }
 
@@ -41,14 +42,19 @@ async function post(req: NextApiRequest, res: NextApiResponse<any>, userId: numb
         return res.status(500).send({ message: "Internal server error" })
     }
 }
-async function get(_req: NextApiRequest, res: NextApiResponse<any>) {
+async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: number) {
     const db = await Database.open('chatsdb.db')
     await seed(db)
     try {
-        const messages = await db.all(`SELECT [userId], [dateTime], [text], [email]
+        const messages: { userId: number }[] = await db.all(`SELECT [userId], [dateTime], [text], [username]
                                          FROM [messages]
-                                  INNER JOIN [users] ON [users].id = [messages].[userId]`)
-        return res.json(JSON.stringify({ messages: messages }))
+                                   INNER JOIN [users] ON [users].id = [messages].[userId]`)
+        return res.json(JSON.stringify({
+            messages: messages.map(message => ({
+                ...message,
+                isMe: message.userId === userId
+            }))
+        }))
     } catch (error) {
         console.log("Get chat error: " + error)
         return res.status(500).send({ message: "Internal server error" })

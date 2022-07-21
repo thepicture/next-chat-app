@@ -10,9 +10,10 @@ import Message from "../components/Message";
 
 export interface MessageResponse {
   id: number;
-  email: string;
+  username: string;
   dateTime: Date;
   text: string;
+  isMe: boolean;
 }
 
 const INTERVAL_IN_MILLISECONDS = 1 * 1000;
@@ -85,24 +86,14 @@ const Home: NextPage = () => {
               }}
             >
               <>
-                {messages.map((message) => {
-                  return (
-                    <Message
-                      key={message.id}
-                      username={
-                        message.email === session!.data!.user!.email
-                          ? "Me"
-                          : message.email
-                      }
-                      side={
-                        message.email === session!.data!.user!.email
-                          ? "right"
-                          : "left"
-                      }
-                      text={message.text}
-                    />
-                  );
-                })}
+                {messages.map((message) => (
+                  <Message
+                    key={message.id}
+                    username={message.isMe ? "Me" : message.username}
+                    side={message.isMe ? "right" : "left"}
+                    text={message.text}
+                  />
+                ))}
               </>
               <form onSubmit={handleSubmit}>
                 <TextField
