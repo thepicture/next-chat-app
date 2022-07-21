@@ -1,10 +1,14 @@
+import { Button } from "@mui/material";
 import type { NextPage } from "next";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "../styles/Home.module.sass";
 
 const Home: NextPage = () => {
-  return (
+  const session = useSession();
+  return session.status === "authenticated" ? (
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -66,6 +70,13 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
+  ) : (
+    <>
+      <Button onClick={() => signIn()}>Sign in</Button>
+      <Link href="/registration">
+        <a style={{ textAlign: "center" }}>Don't have an account?</a>
+      </Link>
+    </>
   );
 };
 
