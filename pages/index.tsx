@@ -1,20 +1,52 @@
-import {
-  Button,
-  Card,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Card, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import axios from "axios";
 import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { FormEvent, useEffect, useState } from "react";
 import Message from "../components/Message";
+
+export interface MessageResponse {
+  id: number;
+  email: string;
+  dateTime: Date;
+  text: string;
+}
+
+const INTERVAL_IN_MILLISECONDS = 1 * 1000;
 
 const Home: NextPage = () => {
   const session = useSession();
+  const [text, setText] = useState("");
+  const [messages, setMessages] = useState<MessageResponse[]>([]);
+  useEffect(() => {
+    let timer: NodeJS.Timer;
+    const retrieveMessages = async () => {
+      try {
+        const response = await axios.get("/api/chat");
+        setMessages(JSON.parse(response.data as any).messages);
+      } catch (error) {
+        console.error("Cannot retrieve messages: " + error);
+      }
+    };
+    timer = setInterval(retrieveMessages, INTERVAL_IN_MILLISECONDS);
+    return () => clearInterval(timer);
+  }, []);
+  const handleChange = (newText: string) => {
+    setText(newText);
+  };
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setText("");
+    try {
+      await axios.post("/api/chat", { text });
+    } catch (error) {
+      console.log(error);
+      alert("Cannot send the message, try again");
+    }
+  };
   return session.status === "authenticated" ? (
     <>
       <Head>
@@ -52,14 +84,38 @@ const Home: NextPage = () => {
                 width: "100%",
               }}
             >
-              <Message username="abc" side="left" text="From the left side" />
-              <Message username="Me" side="right" text="from the right side" />
-              <TextField
-                type="text"
-                autoComplete="none"
-                placeholder="Enter your message"
-              />
-              <Button>Send</Button>
+              <>
+                {messages.map((message) => {
+                  return (
+                    <Message
+                      key={message.id}
+                      username={
+                        message.email === session!.data!.user!.email
+                          ? "Me"
+                          : message.email
+                      }
+                      side={
+                        message.email === session!.data!.user!.email
+                          ? "right"
+                          : "left"
+                      }
+                      text={message.text}
+                    />
+                  );
+                })}
+              </>
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  value={text}
+                  onChange={(e) => handleChange(e.target.value)}
+                  type="text"
+                  autoComplete="none"
+                  placeholder="Enter your message"
+                />
+                <Button type="submit" disabled={!text}>
+                  Send
+                </Button>
+              </form>
             </Box>
           </Card>
         </Box>
