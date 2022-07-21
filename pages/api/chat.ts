@@ -45,11 +45,11 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
     const db = await Database.open('chatsdb.db')
     await seed(db)
     try {
-        const messages: { userId: number }[] = await db.all(`SELECT [userId], [dateTime], [text], [username]
+        const messages: { userId: number }[] = await db.all(`SELECT [messages].[id], [userId], [dateTime], [text], [username]
                                                                FROM [messages]
                                                          INNER JOIN [users] ON [users].id = [messages].[userId]
-                                                          ORDER BY [messages].[id] DESC
-                                                          LIMIT 5`)
+                                                           ORDER BY [messages].[id] DESC
+                                                              LIMIT 5`)
         return res.json(JSON.stringify({
             messages: messages.map(message => ({
                 ...message,

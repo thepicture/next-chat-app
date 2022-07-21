@@ -6,9 +6,10 @@ export interface MessageProps {
   username: string;
   side: "left" | "right";
   text: string;
+  isMe: boolean;
 }
 
-const Message = ({ username, side, text }: MessageProps) => {
+const Message = ({ username, side, text, isMe }: MessageProps) => {
   return (
     <Box width="100%">
       <Box
@@ -31,10 +32,10 @@ const Message = ({ username, side, text }: MessageProps) => {
             fontSize: ".8em",
             marginBottom: "-1em",
             right: 0,
-            opacity: ".9",
+            opacity: ".5",
           }}
         >
-          {username}
+          {isMe ? "Me" : username}
         </Typography>
       </Box>
     </Box>

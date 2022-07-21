@@ -2,7 +2,7 @@ import { Button, Card, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
 import type { NextPage } from "next";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
@@ -68,9 +68,12 @@ const Home: NextPage = () => {
       >
         <Box gridRow={1} marginBottom={4}>
           <Card sx={{ p: 4 }}>
-            <Typography component="h1" variant="h4">
-              Chat
-            </Typography>
+            <Box display="flex" flexDirection="column">
+              <Typography component="h1" variant="h4">
+                Chat
+              </Typography>
+              <Button onClick={() => signOut()}>Logout</Button>
+            </Box>
           </Card>
         </Box>
         <Box gridRow={2} sx={{ height: "calc(100% - 10em)" }}>
@@ -89,7 +92,8 @@ const Home: NextPage = () => {
                 {messages.map((message) => (
                   <Message
                     key={message.id}
-                    username={message.isMe ? "Me" : message.username}
+                    isMe={message.isMe}
+                    username={message.username}
                     side={message.isMe ? "right" : "left"}
                     text={message.text}
                   />

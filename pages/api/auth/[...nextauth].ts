@@ -5,7 +5,6 @@ import seed from './../../../db/db'
 export default NextAuth({
     providers: [
         CredentialsProvider({
-            name: "Sign in in app",
             credentials: {
                 email: { label: "Email", type: "email", placeholder: "Email" },
                 password: { label: "Password", type: "password", placeholder: "Password" }
