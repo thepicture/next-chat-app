@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
+import stc from "string-to-color";
 
 export interface MessageProps {
   username: string;
@@ -12,9 +13,9 @@ const Message = ({ username, side, text }: MessageProps) => {
     <Box width="100%">
       <Box
         sx={{
-          background: "rgb(50, 120, 233)",
+          background: stc(username) + "50",
           borderRadius: "2em",
-          color: "white",
+          color: "black",
           margin: "1em",
           width: "50%",
           position: "relative",

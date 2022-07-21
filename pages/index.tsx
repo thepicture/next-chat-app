@@ -95,7 +95,10 @@ const Home: NextPage = () => {
                   />
                 ))}
               </>
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={handleSubmit}
+                style={{ display: "flex", flexDirection: "column" }}
+              >
                 <TextField
                   value={text}
                   onChange={(e) => handleChange(e.target.value)}

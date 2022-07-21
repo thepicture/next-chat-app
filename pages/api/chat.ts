@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
 import Database from 'sqlite-async'
-import { MessageResponse } from '..'
 import seed from './../../db/db'
 
 export default async function handler(
@@ -47,13 +46,15 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
     await seed(db)
     try {
         const messages: { userId: number }[] = await db.all(`SELECT [userId], [dateTime], [text], [username]
-                                         FROM [messages]
-                                   INNER JOIN [users] ON [users].id = [messages].[userId]`)
+                                                               FROM [messages]
+                                                         INNER JOIN [users] ON [users].id = [messages].[userId]
+                                                          ORDER BY [messages].[id] DESC
+                                                          LIMIT 5`)
         return res.json(JSON.stringify({
             messages: messages.map(message => ({
                 ...message,
-                isMe: message.userId === userId
-            }))
+                isMe: message.userId === userId,
+            })).reverse()
         }))
     } catch (error) {
         console.log("Get chat error: " + error)
