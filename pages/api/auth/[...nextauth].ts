@@ -7,7 +7,7 @@ export default NextAuth({
         CredentialsProvider({
             credentials: {
                 email: { label: "Email", type: "email", placeholder: "Email" },
-                password: { label: "Password", type: "password", placeholder: "Password" }
+                password: { label: "Password", type: "password", placeholder: "Password" },
             },
             async authorize(credentials) {
                 const db = await Database.open('chatsdb.db')
