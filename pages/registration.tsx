@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
-import styles from "../styles/Login.module.sass";
+import styles from "../styles/Home.module.sass";
 import { ErrorMessage, Formik, FormikValues } from "formik";
 import { useRouter } from "next/router";
 
