@@ -31,7 +31,7 @@ const Home: NextPage = () => {
             <Stack>
               <Button
                 onClick={() =>
-                  signIn("credentials", {
+                  signIn(undefined, {
                     callbackUrl: "/chat",
                   })
                 }
