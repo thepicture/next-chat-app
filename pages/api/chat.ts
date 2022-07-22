@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import Database from 'sqlite-async'
+const Database = require('sqlite-async')
 import seed from './../../db/db'
 
 export default async function handler(
@@ -18,13 +18,13 @@ export default async function handler(
         const user = await db.get(`SELECT [id]
                                      FROM [users]
                                     WHERE email = ?
-                                    LIMIT 1`, [session.user!.email]);
-        userId = user.id;
+                                    LIMIT 1`, [session.user!.email])
+        userId = user.id
     }
     if (req.method === 'POST') {
         await post(req, res, userId)
     } else if (req.method === 'GET') {
-        await get(req, res, userId);
+        await get(req, res, userId)
     }
 }
 

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import Database from 'sqlite-async'
+const Database = require('sqlite-async')
 import seed from './../../db/db'
 
 export default async function handler(
@@ -29,6 +29,6 @@ async function doesUserExistWith(email: any, username: any) {
                                WHERE [users].[email] = ?
                                   OR [users].[username] = ?
                                LIMIT 1`, [email, username])
-    return row["COUNT([id])"];
+    return row["COUNT([id])"]
 }
 

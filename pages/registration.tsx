@@ -3,15 +3,16 @@ import axios from "axios";
 import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
 import styles from "../styles/Login.module.sass";
-import { Credentials } from "./login";
-import { ErrorMessage, Formik, FormikHelpers, FormikValues } from "formik";
+import { ErrorMessage, Formik, FormikValues } from "formik";
 import { useRouter } from "next/router";
 
-export interface RegistrationCredentials extends Credentials {
+export interface RegistrationCredentials {
+  email: string;
   username: string;
+  password: string;
 }
 
 const emailRegExpPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -56,7 +57,7 @@ const Login: NextPage = () => {
       <div className={styles.container}>
         <Head>
           <title>Login</title>
-          <meta name="description" content="Enter your new account's info" />
+          <meta name="description" content="Enter your new account info" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Box
@@ -92,7 +93,7 @@ const Login: NextPage = () => {
                 <form onSubmit={handleSubmit}>
                   <Stack>
                     <Typography component="h1" variant="h4">
-                      Enter your new account's info
+                      Enter your new account info
                     </Typography>
                     <TextField
                       onChange={handleChange}

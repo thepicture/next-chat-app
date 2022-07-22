@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import Database from 'sqlite-async'
+const Database = require('sqlite-async')
 import seed from './../../../db/db'
 export default NextAuth({
     providers: [

@@ -123,7 +123,7 @@ const Home: NextPage = () => {
     <>
       <Button onClick={() => signIn()}>Sign in</Button>
       <Link href="/registration">
-        <a style={{ textAlign: "center" }}>Don't have an account?</a>
+        <a style={{ textAlign: "center" }}>Don&apos;t have an account?</a>
       </Link>
     </>
   );
