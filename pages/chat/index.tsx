@@ -90,9 +90,17 @@ const ChatPage = () => {
               {messages.map((message) => (
                 <Message
                   key={message.id}
-                  isMe={message.isMe}
+                  isMe={
+                    (session!.user as { username: string })!.username ===
+                    message.username
+                  }
                   username={message.username}
-                  side={message.isMe ? "right" : "left"}
+                  side={
+                    (session!.user as { username: string })!.username ===
+                    message.username
+                      ? "right"
+                      : "left"
+                  }
                   text={message.text}
                 />
               ))}

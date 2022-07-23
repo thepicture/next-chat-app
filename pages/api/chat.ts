@@ -45,15 +45,12 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
     const db = await Database.open('chatsdb.db')
     await seed(db)
     try {
-        const messages: { userId: number }[] = await db.all(`SELECT [messages].[id], [userId], [dateTime], [text], [username]
+        const messages: { userId: number }[] = await db.all(`SELECT [messages].[id], [dateTime], [text], [username]
                                                                FROM [messages]
                                                          INNER JOIN [users] ON [users].id = [messages].[userId]
                                                            ORDER BY [messages].[id] DESC
                                                               LIMIT 20`)
-        return res.json(messages.map(message => ({
-            ...message,
-            isMe: message.userId === userId,
-        })).reverse())
+        return res.json(messages.reverse())
     } catch (error) {
         console.log("Get chat error: " + error)
         return res.status(500).send({ message: "Internal server error" })
