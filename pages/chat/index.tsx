@@ -2,7 +2,7 @@ import { Grid, Box, Card, Typography, Button, TextField } from "@mui/material";
 import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { MessageResponse } from "..";
 import Message from "../../components/Message";
@@ -24,12 +24,14 @@ const ChatPage = () => {
   const { data: session } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
+  const ref = useRef<any>();
   useEffect(() => {
     const retrieveMessages = async () => {
       try {
         if (!session || Date.parse(session!.expires) < +new Date()) signIn();
-        const response = await axios.get("/api/chat");
-        setMessages(JSON.parse(response.data as any).messages);
+        const response = await axios.get<MessageResponse[]>("/api/chat");
+        setMessages(response.data);
+        ref.current.scrollTop === ref.current.scrollHeight;
       } catch (error) {
         console.error("Cannot retrieve messages: " + error);
       }
@@ -79,6 +81,7 @@ const ChatPage = () => {
         <Card sx={{ m: 1 }}>
           <MessagesContainerGrid>
             <Box
+              ref={ref}
               sx={{ overflowY: "scroll" }}
               height="500px"
               display="flex"

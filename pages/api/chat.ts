@@ -50,12 +50,10 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
                                                          INNER JOIN [users] ON [users].id = [messages].[userId]
                                                            ORDER BY [messages].[id] DESC
                                                               LIMIT 20`)
-        return res.json(JSON.stringify({
-            messages: messages.map(message => ({
-                ...message,
-                isMe: message.userId === userId,
-            })).reverse()
-        }))
+        return res.json(messages.map(message => ({
+            ...message,
+            isMe: message.userId === userId,
+        })).reverse())
     } catch (error) {
         console.log("Get chat error: " + error)
         return res.status(500).send({ message: "Internal server error" })
