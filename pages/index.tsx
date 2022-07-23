@@ -14,6 +14,7 @@ export interface MessageResponse {
   text: string;
   isMe: boolean;
 }
+
 const Home: NextPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -46,9 +47,7 @@ const Home: NextPage = () => {
                 Sign in
               </Button>
               <Link href="/registration">
-                <a style={{ textAlign: "center" }}>
-                  Don&apos;t have an account?
-                </a>
+                <a>Don&apos;t have an account?</a>
               </Link>
             </Stack>
           </Card>

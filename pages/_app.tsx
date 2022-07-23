@@ -1,9 +1,7 @@
 import type { AppProps } from "next/app";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "../styles/globals.sass";
-import { SessionProvider, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { SessionProvider } from "next-auth/react";
 
 const theme = createTheme({
   components: {

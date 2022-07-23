@@ -8,7 +8,7 @@ import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
 import styles from "../styles/Home.module.sass";
 import { ErrorMessage, Formik, FormikValues } from "formik";
 import { useRouter } from "next/router";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export interface RegistrationCredentials {
   email: string;
@@ -135,7 +135,7 @@ const Login: NextPage = () => {
                     </Typography>
                     <Button type="submit">Register</Button>
                     <Link href="/api/auth/signin?callbackUrl=/chat">
-                      <a style={{ textAlign: "center" }}>I have an account</a>
+                      <a>I have an account</a>
                     </Link>
                   </Stack>
                 </form>
