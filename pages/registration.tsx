@@ -3,12 +3,12 @@ import axios from "axios";
 import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AlertDialog, { MessageWithCallback } from "../components/AlertDialog";
 import styles from "../styles/Home.module.sass";
 import { ErrorMessage, Formik, FormikValues } from "formik";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export interface RegistrationCredentials {
   email: string;
@@ -19,6 +19,10 @@ export interface RegistrationCredentials {
 const emailRegExpPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const Login: NextPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+  useEffect(() => {
+    session && router.push("/chat");
+  }, [session]);
   const [messageWithCallback, setMessageWithCallback] =
     useState<MessageWithCallback>({ message: "" });
   const [isOpen, setIsOpen] = useState(false);

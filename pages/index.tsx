@@ -1,8 +1,10 @@
 import { Box, Button, Card, Stack } from "@mui/material";
 import type { NextPage } from "next";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import styles from "./../styles/Home.module.sass";
 
 export interface MessageResponse {
@@ -13,6 +15,11 @@ export interface MessageResponse {
   isMe: boolean;
 }
 const Home: NextPage = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  useEffect(() => {
+    session && router.push("/chat");
+  }, [session]);
   return (
     <>
       <div className={styles.container}>
