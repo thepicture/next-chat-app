@@ -49,7 +49,7 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
                                                                FROM [messages]
                                                          INNER JOIN [users] ON [users].id = [messages].[userId]
                                                            ORDER BY [messages].[id] DESC
-                                                              LIMIT 5`)
+                                                              LIMIT 20`)
         return res.json(JSON.stringify({
             messages: messages.map(message => ({
                 ...message,

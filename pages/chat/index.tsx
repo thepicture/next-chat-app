@@ -3,10 +3,22 @@ import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { FormEvent, useEffect, useState } from "react";
+import styled from "styled-components";
 import { MessageResponse } from "..";
 import Message from "../../components/Message";
 
 const INTERVAL_IN_MILLISECONDS = 1 * 1000;
+
+const ChatContainerGrid = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+`;
+const MessagesContainerGrid = styled.div`
+  display: grid;
+  height: 100%
+  grid-template-rows: 1fr 1fr;
+`;
 
 const ChatPage = () => {
   const { data: session } = useSession();
@@ -45,23 +57,13 @@ const ChatPage = () => {
         <meta name="description" content="Chat with logged in users" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid
-        gridTemplateRows="auto 1fr"
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-        margin={4}
-      >
-        <Box gridRow={1} marginBottom={4}>
-          <Card sx={{ p: 4 }}>
-            <Box display="flex" flexDirection="column">
-              <Typography component="h1" variant="h4">
-                Chat
-              </Typography>
+      <ChatContainerGrid>
+        <Box mt={1} mr={1} ml={1}>
+          <Card>
+            <Typography component="h1" variant="h4">
+              Chat
+            </Typography>
+            <Box textAlign="center">
               <Button
                 onClick={() =>
                   signOut({
@@ -74,48 +76,47 @@ const ChatPage = () => {
             </Box>
           </Card>
         </Box>
-        <Box gridRow={2} sx={{ height: "calc(100% - 10em)" }}>
-          <Card sx={{ p: 4, height: "100%" }}>
+        <Card sx={{ m: 1 }}>
+          <MessagesContainerGrid>
             <Box
+              sx={{ overflowY: "scroll" }}
+              height="500px"
               display="flex"
               flexDirection="column"
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: 0,
-                width: "100%",
-              }}
             >
-              <>
-                {messages.map((message) => (
-                  <Message
-                    key={message.id}
-                    isMe={message.isMe}
-                    username={message.username}
-                    side={message.isMe ? "right" : "left"}
-                    text={message.text}
-                  />
-                ))}
-              </>
-              <form
-                onSubmit={handleSubmit}
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <TextField
-                  value={text}
-                  onChange={(e) => handleChange(e.target.value)}
-                  type="text"
-                  autoComplete="none"
-                  placeholder="Enter your message"
+              {messages.map((message) => (
+                <Message
+                  key={message.id}
+                  isMe={message.isMe}
+                  username={message.username}
+                  side={message.isMe ? "right" : "left"}
+                  text={message.text}
                 />
-                <Button type="submit" disabled={!text}>
-                  Send
-                </Button>
-              </form>
+              ))}
             </Box>
-          </Card>
-        </Box>
-      </Grid>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                value={text}
+                onChange={(e) => handleChange(e.target.value)}
+                type="text"
+                autoComplete="none"
+                placeholder="Enter your message"
+                fullWidth={true}
+                sx={{ m: 0, p: 0, pt: 1, pb: 1 }}
+              />
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={!text}
+                fullWidth={true}
+                sx={{ m: 0 }}
+              >
+                Send
+              </Button>
+            </form>
+          </MessagesContainerGrid>
+        </Card>
+      </ChatContainerGrid>
     </>
   );
 };
