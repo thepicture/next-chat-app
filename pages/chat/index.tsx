@@ -15,8 +15,10 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { MessageResponse } from "..";
 import Message from "../../components/Message";
-
-const INTERVAL_IN_MILLISECONDS = 1 * 1000;
+import io from "socket.io-client";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+let socket: any;
 
 const ChatContainerGrid = styled.div`
   display: grid;
@@ -29,27 +31,22 @@ const MessagesContainerGrid = styled.div`
   grid-template-rows: 1fr auto;
 `;
 
-const isExpired = (session: Session) =>
-  !session || Date.parse(session!.expires) < +new Date();
-
 const ChatPage = () => {
   const { data: session } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
   const ref = useRef<HTMLElement>();
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
+  const initializeSocket = async () => {
+    await axios.get("/api/socket");
+    socket = io();
+    socket.on("get-all-messages", (messages: MessageResponse[]) => {
+      setMessages(messages);
+    });
+  };
   useEffect(() => {
-    const retrieveMessages = async () => {
-      try {
-        if (isExpired(session!)) signIn();
-        const response = await axios.get<MessageResponse[]>("/api/chat");
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Cannot retrieve messages: " + error);
-      }
-    };
-    let timer = setInterval(retrieveMessages, INTERVAL_IN_MILLISECONDS);
-    return () => clearInterval(timer);
+    if (!session) return;
+    initializeSocket();
   }, [session]);
   useEffect(() => {
     if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
@@ -61,7 +58,7 @@ const ChatPage = () => {
     event.preventDefault();
     setText("");
     try {
-      await axios.post("/api/chat", { text });
+      socket.emit("send-message", text);
     } catch (error) {
       console.log(error);
       alert("Cannot send the message, try again");
