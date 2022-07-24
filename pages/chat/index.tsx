@@ -22,13 +22,13 @@ let socket: any;
 
 const ChatContainerGrid = styled.div`
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
   height: 100vh;
 `;
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto auto;
 `;
 
 const ChatPage = () => {
