@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
   useEffect(() => {
     session && router.push("/chat");
-  }, [session]);
+  }, [session, router]);
   return (
     <>
       <div className={styles.container}>

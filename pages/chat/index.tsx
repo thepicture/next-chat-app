@@ -50,7 +50,7 @@ const ChatPage = () => {
   }, [session]);
   useEffect(() => {
     if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
-  }, [messages.length]);
+  }, [messages.length, isAutoscrollEnabled]);
   const handleChange = (newText: string) => {
     setText(newText);
   };

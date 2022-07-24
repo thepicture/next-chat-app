@@ -22,7 +22,7 @@ const Login: NextPage = () => {
   const { data: session } = useSession();
   useEffect(() => {
     session && router.push("/chat");
-  }, [session]);
+  }, [session, router]);
   const [messageWithCallback, setMessageWithCallback] =
     useState<MessageWithCallback>({ message: "" });
   const [isOpen, setIsOpen] = useState(false);
