@@ -17,7 +17,7 @@ const ChatContainerGrid = styled.div`
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr auto;
 `;
 
 const ChatPage = () => {
@@ -79,11 +79,10 @@ const ChatPage = () => {
           </Card>
         </Box>
         <Card sx={{ m: 1 }}>
-          <MessagesContainerGrid>
+          <MessagesContainerGrid style={{ height: "100%" }}>
             <Box
               ref={ref}
               sx={{ overflowY: "scroll" }}
-              height="500px"
               display="flex"
               flexDirection="column"
             >
