@@ -36,7 +36,6 @@ const ChatPage = () => {
   const { data: session } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
-  const [lastMessagesCount, setLastMessagesCount] = useState(0);
   const ref = useRef<HTMLElement>();
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   useEffect(() => {
@@ -53,11 +52,8 @@ const ChatPage = () => {
     return () => clearInterval(timer);
   }, [session]);
   useEffect(() => {
-    if (lastMessagesCount < messages.length)
-      if (isAutoscrollEnabled)
-        ref.current!.scrollTop = ref.current!.scrollHeight;
-    setLastMessagesCount(messages.length);
-  }, [messages]);
+    if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
+  }, [messages.length]);
   const handleChange = (newText: string) => {
     setText(newText);
   };
