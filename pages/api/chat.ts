@@ -48,8 +48,7 @@ async function get(_req: NextApiRequest, res: NextApiResponse<any>, userId: numb
         const messages: { userId: number }[] = await db.all(`SELECT [messages].[id], [dateTime], [text], [username]
                                                                FROM [messages]
                                                          INNER JOIN [users] ON [users].id = [messages].[userId]
-                                                           ORDER BY [messages].[id] DESC
-                                                              LIMIT 20`)
+                                                           ORDER BY [messages].[id] DESC`)
         return res.json(messages.reverse())
     } catch (error) {
         console.log("Get chat error: " + error)

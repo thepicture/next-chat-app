@@ -1,5 +1,14 @@
-import { Grid, Box, Card, Typography, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Card,
+  Typography,
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import axios from "axios";
+import { Session } from "next-auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
@@ -11,27 +20,31 @@ const INTERVAL_IN_MILLISECONDS = 1 * 1000;
 
 const ChatContainerGrid = styled.div`
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   height: 100vh;
 `;
 const MessagesContainerGrid = styled.div`
   display: grid;
-  height: 100%
+  height: 100%;
   grid-template-rows: 1fr auto;
 `;
+
+const isExpired = (session: Session) =>
+  !session || Date.parse(session!.expires) < +new Date();
 
 const ChatPage = () => {
   const { data: session } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
-  const ref = useRef<any>();
+  const [lastMessagesCount, setLastMessagesCount] = useState(0);
+  const ref = useRef<HTMLElement>();
+  const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   useEffect(() => {
     const retrieveMessages = async () => {
       try {
-        if (!session || Date.parse(session!.expires) < +new Date()) signIn();
+        if (isExpired(session!)) signIn();
         const response = await axios.get<MessageResponse[]>("/api/chat");
         setMessages(response.data);
-        ref.current.scrollTop === ref.current.scrollHeight;
       } catch (error) {
         console.error("Cannot retrieve messages: " + error);
       }
@@ -39,6 +52,12 @@ const ChatPage = () => {
     let timer = setInterval(retrieveMessages, INTERVAL_IN_MILLISECONDS);
     return () => clearInterval(timer);
   }, [session]);
+  useEffect(() => {
+    if (lastMessagesCount < messages.length)
+      if (isAutoscrollEnabled)
+        ref.current!.scrollTop = ref.current!.scrollHeight;
+    setLastMessagesCount(messages.length);
+  }, [messages]);
   const handleChange = (newText: string) => {
     setText(newText);
   };
@@ -79,7 +98,7 @@ const ChatPage = () => {
           </Card>
         </Box>
         <Card sx={{ m: 1 }}>
-          <MessagesContainerGrid style={{ height: "100%" }}>
+          <MessagesContainerGrid>
             <Box
               ref={ref}
               sx={{ overflowY: "scroll" }}
@@ -104,6 +123,15 @@ const ChatPage = () => {
                 />
               ))}
             </Box>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  defaultChecked
+                  onChange={(e) => setIsAutoscrollEnabled(e.target.checked)}
+                />
+              }
+              label="Autoscroll"
+            />
             <form onSubmit={handleSubmit}>
               <TextField
                 value={text}
