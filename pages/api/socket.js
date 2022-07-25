@@ -18,7 +18,7 @@ const handler = async (req, res) => {
         io.on('connection', async socket => {
             const db = await Database.open('chatsdb.db')
             await seed(db)
-            const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [username]
+            const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [email]
                                              FROM [messages]
                                        INNER JOIN [users] ON [users].id = [messages].[userId]
                                          ORDER BY [messages].[id] DESC`)
@@ -37,7 +37,7 @@ const handler = async (req, res) => {
                         session.user.email])
                     await db.run(`INSERT INTO [messages] ([userId], [dateTime], [text])
                                        VALUES (?, ?, ?)`, [user.id, + new Date(), message])
-                    const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [username]
+                    const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [email]
                                                      FROM [messages]
                                                INNER JOIN [users] ON [users].id = [messages].[userId]
                                                  ORDER BY [messages].[id] DESC`)

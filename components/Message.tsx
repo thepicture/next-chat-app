@@ -3,18 +3,18 @@ import React from "react";
 import stc from "string-to-color";
 
 export interface MessageProps {
-  username: string;
+  email: string;
   side: "left" | "right";
   text: string;
   isMe: boolean;
 }
 
-const Message = ({ username, side, text, isMe }: MessageProps) => {
+const Message = ({ email, side, text, isMe }: MessageProps) => {
   return (
     <Box width="100%">
       <Box
         sx={{
-          background: stc(username) + "50",
+          background: stc(email) + "50",
           borderRadius: "2em",
           color: "black",
           width: "50%",
@@ -35,7 +35,7 @@ const Message = ({ username, side, text, isMe }: MessageProps) => {
             opacity: ".5",
           }}
         >
-          {isMe ? "Me" : username}
+          {isMe ? "Me" : email}
         </Typography>
       </Box>
     </Box>

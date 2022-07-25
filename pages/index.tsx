@@ -9,7 +9,7 @@ import styles from "./../styles/Home.module.sass";
 
 export interface MessageResponse {
   id: number;
-  username: string;
+  email: string;
   dateTime: Date;
   text: string;
   isMe: boolean;

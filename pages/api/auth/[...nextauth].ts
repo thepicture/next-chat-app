@@ -14,8 +14,8 @@ export default NextAuth({
                 await seed(db)
                 const user = await db.get(`SELECT [id], [username], [email]
                                              FROM [users]
-                                            WHERE [users].[email] = ? 
-                                              AND [users].[password] = ?
+                                            WHERE [email] = ? 
+                                              AND [password] = ?
                                             LIMIT 1`, [credentials?.email, credentials?.password])
                 if (user) {
                     return user
@@ -25,21 +25,4 @@ export default NextAuth({
             },
         })
     ],
-    callbacks: {
-        jwt: async ({ token, user }) => {
-            user && (token.user = user)
-            return token
-        },
-        session: async ({ session, token }) => {
-            const db = await Database.open('chatsdb.db')
-            await seed(db)
-            const userFromDatabase = await db.get(`SELECT [username]
-                                             FROM [users]
-                                            WHERE [users].[email] = ? 
-                                            LIMIT 1`, [(<any>token).user.email]) as any
-            (<any>token).user.username = userFromDatabase.username
-            session.user = (<any>token).user;
-            return session
-        }
-    }
 })
