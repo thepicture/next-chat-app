@@ -8,8 +8,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import axios from "axios";
-import { Session } from "next-auth";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
@@ -17,7 +16,6 @@ import { MessageResponse } from "..";
 import Message from "../../components/Message";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 let socket: any;
 
 const ChatContainerGrid = styled.div`
@@ -79,11 +77,12 @@ const ChatPage = () => {
             </Typography>
             <Box textAlign="center">
               <Button
-                onClick={() =>
+                onClick={() => {
+                  (socket as Socket).disconnect();
                   signOut({
                     callbackUrl: "/",
-                  })
-                }
+                  });
+                }}
               >
                 Logout
               </Button>
@@ -102,13 +101,13 @@ const ChatPage = () => {
                 <Message
                   key={message.id}
                   isMe={
-                    (session!.user as { username: string })!.username ===
-                    message.username
+                    (session!.user as { email: string })!.email ===
+                    message.email
                   }
-                  username={message.username}
+                  email={message.email}
                   side={
-                    (session!.user as { username: string })!.username ===
-                    message.username
+                    (session!.user as { email: string })!.email ===
+                    message.email
                       ? "right"
                       : "left"
                   }
