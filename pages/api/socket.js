@@ -28,13 +28,12 @@ const handler = async (req, res) => {
                 const db = await Database.open('chatsdb.db')
                 await seed(db)
                 try {
-                    const session = await getSession({ req })
                     const user = await db.get(`SELECT [id]
                                                  FROM [users]
                                                 WHERE email = ?
                                                 LIMIT 1`, [
                         // @ts-ignore
-                        session.user.email])
+                        socket.handshake.query.email])
                     await db.run(`INSERT INTO [messages] ([userId], [dateTime], [text])
                                        VALUES (?, ?, ?)`, [user.id, + new Date(), message])
                     const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [email]

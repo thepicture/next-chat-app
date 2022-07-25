@@ -1,4 +1,4 @@
-import NextAuth, { Awaitable, Session, User } from "next-auth"
+import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 const Database = require('sqlite-async')
 import seed from './../../../db/db'

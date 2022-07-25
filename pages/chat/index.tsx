@@ -37,10 +37,14 @@ const ChatPage = () => {
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   const initializeSocket = async () => {
     await axios.get("/api/socket");
-    socket = io();
-    socket.on("get-all-messages", (messages: MessageResponse[]) => {
-      setMessages(messages);
+    socket = io({
+      query: {
+        email: session.user.email,
+      },
     });
+    socket.on("get-all-messages", (messages: MessageResponse[]) =>
+      setMessages(messages)
+    );
   };
   useEffect(() => {
     if (!session) return;
