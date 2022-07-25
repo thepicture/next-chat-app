@@ -39,7 +39,7 @@ const ChatPage = () => {
     await axios.get("/api/socket");
     socket = io({
       query: {
-        email: session.user.email,
+        email: session!.user!.email,
       },
     });
     socket.on("get-all-messages", (messages: MessageResponse[]) =>
@@ -58,9 +58,19 @@ const ChatPage = () => {
   };
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setText("");
     try {
       socket.emit("send-message", text);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev[prev.length - 1].id + 1,
+          email: session!.user!.email!,
+          dateTime: new Date(),
+          text,
+          isMe: true,
+        },
+      ]);
+      setText("");
     } catch (error) {
       console.log(error);
       alert("Cannot send the message, try again");

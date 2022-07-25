@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                                                      FROM [messages]
                                                INNER JOIN [users] ON [users].id = [messages].[userId]
                                                  ORDER BY [messages].[id] DESC`);
-                    socket.emit('get-all-messages', messages.reverse());
+                    socket.broadcast.emit('get-all-messages', messages.reverse());
                 } catch (error) {
                     console.log("Post chat error: " + error);
                 }
