@@ -19,8 +19,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                                              FROM [messages]
                                        INNER JOIN [users] ON [users].id = [messages].[userId]
                                          ORDER BY [messages].[id] DESC`);
-            socket.emit('get-all-messages', messages.reverse());
-            socket.on('send-message', async message => {
+            socket.emit('get all messages', messages.reverse());
+            socket.on('post message', async message => {
                 const db = await Database.open('chatsdb.db');
                 await seed(db);
                 try {
@@ -30,11 +30,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                                                 LIMIT 1`, [socket.handshake.query.email]);
                     await db.run(`INSERT INTO [messages] ([userId], [dateTime], [text])
                                        VALUES (?, ?, ?)`, [user.id, + new Date(), message]);
-                    const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [email]
-                                                     FROM [messages]
-                                               INNER JOIN [users] ON [users].id = [messages].[userId]
-                                                 ORDER BY [messages].[id] DESC`);
-                    socket.broadcast.emit('get-all-messages', messages.reverse());
+                    socket.broadcast.emit('new message', {
+                        email: socket.handshake.query.email, text: message
+                    });
                 } catch (error) {
                     console.log("Post chat error: " + error);
                 }

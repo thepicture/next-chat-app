@@ -42,8 +42,20 @@ const ChatPage = () => {
         email: session!.user!.email,
       },
     });
-    socket.on("get-all-messages", (messages: MessageResponse[]) =>
+    socket.on("get all messages", (messages: MessageResponse[]) =>
       setMessages(messages)
+    );
+    socket.on("new message", (message: MessageResponse) =>
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (prev[prev.length - 1]?.id || 1) + 1,
+          email: message.email,
+          dateTime: new Date(),
+          text: message.text,
+          isMe: false,
+        },
+      ])
     );
   };
   useEffect(() => {
@@ -59,11 +71,11 @@ const ChatPage = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      socket.emit("send-message", text);
+      socket.emit("post message", text);
       setMessages((prev) => [
         ...prev,
         {
-          id: prev[prev.length - 1].id + 1,
+          id: (prev[prev.length - 1]?.id || 1) + 1,
           email: session!.user!.email!,
           dateTime: new Date(),
           text,
