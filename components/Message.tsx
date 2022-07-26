@@ -24,7 +24,14 @@ const Message = ({ email, side, text, isMe }: MessageProps) => {
           right: 0,
         }}
       >
-        <Typography component="p">{text}</Typography>
+        <Typography
+          component="p"
+          sx={{
+            wordWrap: "break-word",
+          }}
+        >
+          {text}
+        </Typography>
         <Typography
           sx={{
             position: "absolute",
