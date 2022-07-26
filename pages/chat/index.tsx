@@ -16,6 +16,7 @@ import { MessageResponse } from "..";
 import Message from "../../components/Message";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
+import TypingList from "../../components/TypingList";
 let socket: any;
 
 const ChatContainerGrid = styled.div`
@@ -26,8 +27,9 @@ const ChatContainerGrid = styled.div`
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%;
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: 1fr auto auto auto;
 `;
+const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 
 const ChatPage = () => {
   const { data: session } = useSession();
@@ -35,6 +37,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState<MessageResponse[]>([]);
   const ref = useRef<HTMLElement>();
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
+  const [typers, setTypers] = useState<string[]>([]);
   useEffect(() => {
     if (!session) return;
     if (socket) return;
@@ -61,6 +64,18 @@ const ChatPage = () => {
           },
         ])
       );
+      let _typersCache: string[] = [];
+      socket.on("typing", (typer: { email: string }) => {
+        if (_typersCache.includes(typer.email)) return;
+        _typersCache = [..._typersCache, typer.email];
+        setTypers(_typersCache);
+        setTimeout(() => {
+          _typersCache = _typersCache.filter(
+            (prevTyper) => prevTyper !== typer.email
+          );
+          setTypers(_typersCache);
+        }, TYPING_STOP_TIMEOUT_IN_MILLISECONDS);
+      });
     };
 
     initializeSocket();
@@ -70,6 +85,7 @@ const ChatPage = () => {
   }, [messages.length, isAutoscrollEnabled]);
   const handleChange = (newText: string) => {
     setText(newText);
+    socket.emit("typing");
   };
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -144,6 +160,7 @@ const ChatPage = () => {
                 />
               ))}
             </Box>
+            <TypingList typers={typers} />
             <FormControlLabel
               control={
                 <Checkbox

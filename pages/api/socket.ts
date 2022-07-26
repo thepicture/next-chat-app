@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import seed from "../../db/db";
 // @ts-ignore
 import Database from "sqlite-async";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
@@ -36,7 +37,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 } catch (error) {
                     console.log("Post chat error: " + error);
                 }
-            })
+            });
+            socket.on("typing", () => {
+                socket.broadcast.emit("typing", { email: socket.handshake.query.email });
+            });
         });
     }
     res.end();
