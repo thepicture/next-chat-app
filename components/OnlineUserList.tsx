@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React from "react";
 
 export interface OnlineUserListProps {
@@ -8,7 +9,14 @@ const OnlineUserList = ({ onlineUsers }: OnlineUserListProps) => {
   return (
     <div>
       {onlineUsers.map((onlineUser) => (
-        <p key={onlineUser}>{onlineUser}</p>
+        <Typography
+          key={onlineUser}
+          component="h3"
+          variant="h6"
+          sx={{ textAlign: "inherit", pt: 0 }}
+        >
+          {onlineUser}
+        </Typography>
       ))}
     </div>
   );

@@ -157,7 +157,16 @@ const ChatPage = () => {
         </Box>
         <Card sx={{ m: 1 }}>
           <MessagesContainerGrid>
-            <OnlineUserList onlineUsers={onlineUsers} />
+            <Box>
+              <Typography
+                component="h2"
+                variant="h4"
+                sx={{ textAlign: "inherit" }}
+              >
+                Online users
+              </Typography>
+              <OnlineUserList onlineUsers={onlineUsers} />
+            </Box>
             <Box
               ref={ref}
               sx={{ overflowY: "scroll" }}
