@@ -17,9 +17,9 @@ import Message from "../../components/Message";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
 import TypingList from "../../components/TypingList";
-import OnlineUserList, {
-  OnlineUserListProps,
-} from "../../components/OnlineUserList";
+import OnlineUserList from "../../components/OnlineUserList";
+import EmojiPicker, { IEmojiData } from "emoji-picker-react";
+import dynamic from "next/dynamic";
 let socket: any;
 
 const ChatContainerGrid = styled.div`
@@ -30,8 +30,20 @@ const ChatContainerGrid = styled.div`
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%;
-  grid-template-rows: auto 1fr auto auto auto;
+  grid-template-rows: auto 1fr auto auto auto auto;
 `;
+
+const EmojiToggler = styled.div<{ isShowEmoji: boolean }>`
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 128px;
+  display: ${(props) => (props.isShowEmoji ? "inherit" : "none")};
+`;
+
+const NoSSREmojiPicker = dynamic(() => import("emoji-picker-react"), {
+  ssr: false,
+});
+
 const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 
 const ChatPage = () => {
@@ -42,6 +54,7 @@ const ChatPage = () => {
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   const [typers, setTypers] = useState<string[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [isShowEmoji, setIsShowEmoji] = useState(false);
   useEffect(() => {
     if (!session) return;
     if (socket) return;
@@ -128,6 +141,13 @@ const ChatPage = () => {
       alert("Cannot send the message, try again");
     }
   };
+  const handleEmojiClick = (
+    _event: React.MouseEvent<Element, MouseEvent>,
+    data: IEmojiData
+  ) => {
+    setText((prev) => prev + data.emoji);
+    setIsShowEmoji(false);
+  };
   return (
     <>
       <Head>
@@ -211,6 +231,17 @@ const ChatPage = () => {
                 fullWidth={true}
                 sx={{ m: 0, p: 0, pt: 1, pb: 1 }}
               />
+              <Button
+                onClick={() => setIsShowEmoji((prev) => !prev)}
+                variant="contained"
+                fullWidth={true}
+                sx={{ m: 0, mb: 1 }}
+              >
+                😀
+              </Button>
+              <EmojiToggler isShowEmoji={isShowEmoji}>
+                <NoSSREmojiPicker onEmojiClick={handleEmojiClick} />
+              </EmojiToggler>
               <Button
                 variant="contained"
                 type="submit"
