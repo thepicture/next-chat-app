@@ -4,7 +4,8 @@ import { Server } from "socket.io";
 import seed from "../../db/db";
 // @ts-ignore
 import Database from "sqlite-async";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+
+let onlineUserEmails: string[] = [];
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
@@ -14,13 +15,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const io = new Server((<any>res.socket).server);
         (<any>res.socket).server.io = io;
         io.on('connection', async socket => {
+            if (!onlineUserEmails.includes(socket.handshake.query.email as string))
+                onlineUserEmails = [...onlineUserEmails, socket.handshake.query.email as string];
+            socket.broadcast.emit('user connect', { email: socket.handshake.query.email });
+            socket.on('disconnect', () => {
+                onlineUserEmails = onlineUserEmails.filter(email => email !== socket.handshake.query.email);
+                socket.broadcast.emit('user disconnect', { email: socket.handshake.query.email });
+            });
             const db = await Database.open('chatsdb.db');
             await seed(db);
             const messages = await db.all(`SELECT [messages].[id], [dateTime], [text], [email]
                                              FROM [messages]
                                        INNER JOIN [users] ON [users].id = [messages].[userId]
                                          ORDER BY [messages].[id] DESC`);
-            socket.emit('get all messages', messages.reverse());
+            socket.emit('get all messages', { messages: messages.reverse(), onlineUsers: onlineUserEmails });
             socket.on('post message', async message => {
                 const db = await Database.open('chatsdb.db');
                 await seed(db);

@@ -17,6 +17,9 @@ import Message from "../../components/Message";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
 import TypingList from "../../components/TypingList";
+import OnlineUserList, {
+  OnlineUserListProps,
+} from "../../components/OnlineUserList";
 let socket: any;
 
 const ChatContainerGrid = styled.div`
@@ -27,7 +30,7 @@ const ChatContainerGrid = styled.div`
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%;
-  grid-template-rows: 1fr auto auto auto;
+  grid-template-rows: auto 1fr auto auto auto;
 `;
 const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 
@@ -38,6 +41,7 @@ const ChatPage = () => {
   const ref = useRef<HTMLElement>();
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   const [typers, setTypers] = useState<string[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   useEffect(() => {
     if (!session) return;
     if (socket) return;
@@ -49,8 +53,15 @@ const ChatPage = () => {
           email: session!.user!.email,
         },
       });
-      socket.on("get all messages", (messages: MessageResponse[]) =>
-        setMessages(messages)
+      socket.on(
+        "get all messages",
+        (messagesAndUsers: {
+          messages: MessageResponse[];
+          onlineUsers: string[];
+        }) => {
+          setMessages(messagesAndUsers.messages);
+          setOnlineUsers(messagesAndUsers.onlineUsers);
+        }
       );
       socket.on("new message", (message: MessageResponse) =>
         setMessages((prev) => [
@@ -75,6 +86,16 @@ const ChatPage = () => {
           );
           setTypers(_typersCache);
         }, TYPING_STOP_TIMEOUT_IN_MILLISECONDS);
+      });
+      socket.on("user connect", (newUser: { email: string }) => {
+        setOnlineUsers((prev) =>
+          prev.includes(newUser.email) ? prev : [...prev, newUser.email]
+        );
+      });
+      socket.on("user disconnect", (disconnectedUser: { email: string }) => {
+        setOnlineUsers((prev) =>
+          prev.filter((onlineUser) => onlineUser != disconnectedUser.email)
+        );
       });
     };
 
@@ -136,6 +157,7 @@ const ChatPage = () => {
         </Box>
         <Card sx={{ m: 1 }}>
           <MessagesContainerGrid>
+            <OnlineUserList onlineUsers={onlineUsers} />
             <Box
               ref={ref}
               sx={{ overflowY: "scroll" }}
