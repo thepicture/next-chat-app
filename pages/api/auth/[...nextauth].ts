@@ -6,6 +6,9 @@ export default NextAuth({
     jwt: {
         maxAge: parseInt(process.env.SESSION_EXPIRES_IN_MILLISECONDS!) / 1000
     },
+    pages: {
+        signIn: '/auth/credentials-signin',
+    },
     providers: [
         CredentialsProvider({
             credentials: {

@@ -17,7 +17,7 @@ export interface RegistrationCredentials {
 }
 
 const emailRegExpPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-const Login: NextPage = () => {
+const Registration: NextPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   useEffect(() => {
@@ -159,4 +159,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default Registration;
