@@ -1,9 +1,10 @@
 import { Box, Card, Stack, Typography, TextField, Button } from "@mui/material";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { getCsrfToken } from "next-auth/react";
+import { getCsrfToken, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import styles from "./../../styles/Home.module.sass";
 
 export interface SignInProps {
@@ -13,6 +14,10 @@ export interface SignInProps {
 const SignIn: NextPage<SignInProps> = ({ csrfToken }) => {
   const router = useRouter();
   const { error } = router.query;
+  const { status } = useSession();
+  useEffect(() => {
+    status === "authenticated" && router.push("/chat");
+  }, [status, router]);
   return (
     <>
       <div className={styles.container}>

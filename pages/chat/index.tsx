@@ -130,7 +130,7 @@ const ChatPage = () => {
     };
 
     initializeSocket();
-  }, [status, session]);
+  }, [status, session, router]);
   useEffect(() => {
     if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
   }, [messages.length, isAutoscrollEnabled]);
