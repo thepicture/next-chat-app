@@ -94,7 +94,7 @@ const Login: NextPage = () => {
               }}
               onSubmit={(values) => handleRegistration(values)}
             >
-              {({ values, handleChange, handleSubmit }) => (
+              {({ values, errors, handleChange, handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
                   <Stack>
                     <Typography component="h1" variant="h4">
@@ -108,9 +108,11 @@ const Login: NextPage = () => {
                       name="email"
                       placeholder="Email"
                     />
-                    <Typography component="p">
-                      <ErrorMessage name="email" />
-                    </Typography>
+                    {errors.email && (
+                      <Typography component="p">
+                        <ErrorMessage name="email" />
+                      </Typography>
+                    )}
                     <TextField
                       onChange={handleChange}
                       value={values.username}
@@ -119,9 +121,11 @@ const Login: NextPage = () => {
                       name="username"
                       placeholder="Username"
                     />{" "}
-                    <Typography component="p">
-                      <ErrorMessage name="username" />
-                    </Typography>
+                    {errors.username && (
+                      <Typography component="p">
+                        <ErrorMessage name="username" />
+                      </Typography>
+                    )}
                     <TextField
                       onChange={handleChange}
                       value={values.password}
@@ -130,9 +134,11 @@ const Login: NextPage = () => {
                       name="password"
                       placeholder="Password"
                     />
-                    <Typography component="p">
-                      <ErrorMessage name="password" />
-                    </Typography>
+                    {errors.password && (
+                      <Typography component="p">
+                        <ErrorMessage name="password" />
+                      </Typography>
+                    )}
                     <Button type="submit">Register</Button>
                     <Link href="/api/auth/signin?callbackUrl=/chat">
                       <a>I have an account</a>
