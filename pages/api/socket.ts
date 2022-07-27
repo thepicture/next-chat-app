@@ -1,20 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { Server } from "socket.io";
 import seed from "../../db/db";
 // @ts-ignore
 import Database from "sqlite-async";
+import { getToken } from "next-auth/jwt";
 
 let onlineUserEmails: string[] = [];
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getSession({ req });
-    if (!session)
+    const token = await getToken({ req });
+    if (!token)
         return res.status(401).json({ message: 'Unauthorized' });
     if (!(<any>res!.socket)!.server.io) {
         const io = new Server((<any>res.socket).server);
         (<any>res.socket).server.io = io;
         io.on('connection', async socket => {
+            setTimeout(() => {
+                socket.emit('expired');
+                socket.disconnect();
+            }, parseInt(process.env.SESSION_EXPIRES_IN_MILLISECONDS!));
             if (!onlineUserEmails.includes(socket.handshake.query.email as string))
                 onlineUserEmails = [...onlineUserEmails, socket.handshake.query.email as string];
             socket.broadcast.emit('user connect', { email: socket.handshake.query.email });

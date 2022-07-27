@@ -18,7 +18,7 @@ import io from "socket.io-client";
 import { Socket } from "socket.io";
 import TypingList from "../../components/TypingList";
 import OnlineUserList from "../../components/OnlineUserList";
-import EmojiPicker, { IEmojiData } from "emoji-picker-react";
+import { IEmojiData } from "emoji-picker-react";
 import dynamic from "next/dynamic";
 let socket: any;
 
@@ -47,7 +47,7 @@ const NoSSREmojiPicker = dynamic(() => import("emoji-picker-react"), {
 const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 
 const ChatPage = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
   const ref = useRef<HTMLElement>();
@@ -56,7 +56,11 @@ const ChatPage = () => {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [isShowEmoji, setIsShowEmoji] = useState(false);
   useEffect(() => {
-    if (!session) return;
+    if (status === "loading") return;
+    if (status === "unauthenticated")
+      signOut({
+        callbackUrl: "/",
+      });
     if (socket) return;
 
     const initializeSocket = async () => {
@@ -110,10 +114,15 @@ const ChatPage = () => {
           prev.filter((onlineUser) => onlineUser != disconnectedUser.email)
         );
       });
+      socket.on("expired", () =>
+        signOut({
+          callbackUrl: "/",
+        })
+      );
     };
 
     initializeSocket();
-  }, [session]);
+  }, [status]);
   useEffect(() => {
     if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
   }, [messages.length, isAutoscrollEnabled]);
