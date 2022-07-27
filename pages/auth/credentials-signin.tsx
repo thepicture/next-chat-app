@@ -2,6 +2,7 @@ import { Box, Card, Stack, Typography, TextField, Button } from "@mui/material";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getCsrfToken } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "./../../styles/Home.module.sass";
 
@@ -45,6 +46,9 @@ const SignIn: NextPage<SignInProps> = ({ csrfToken }) => {
                   placeholder="Password"
                 />
                 <Button type="submit">Sign in</Button>
+                <Link href="/registration">
+                  <a>Don&apos;t have an account?</a>
+                </Link>
               </Stack>
             </form>
           </Card>

@@ -4,6 +4,15 @@ const nextConfig = {
   swcMinify: true,
   compiler: {
     styledComponents: true
+  },
+  redirects: async () => {
+    return [
+      {
+        source: '/',
+        destination: '/auth/credentials-signin',
+        permanent: true
+      }
+    ]
   }
 }
 

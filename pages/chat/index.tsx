@@ -12,7 +12,6 @@ import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { MessageResponse } from "..";
 import Message from "../../components/Message";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
@@ -44,6 +43,14 @@ const EmojiToggler = styled.div<{ isShowEmoji: boolean }>`
 const NoSSREmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
 });
+
+export interface MessageResponse {
+  id: number;
+  email: string;
+  dateTime: Date;
+  text: string;
+  isMe: boolean;
+}
 
 const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 

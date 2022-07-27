@@ -85,7 +85,7 @@ const Registration: NextPage = () => {
                 if (!values.username.trim())
                   errors.username = "Username required";
                 if (!values.password.trim())
-                  errors.password = "Password required without white spaces";
+                  errors.password = "Password required";
                 else if (values.password.length < 5)
                   errors.password =
                     "Password length must be at least 5 characters long";
@@ -109,8 +109,8 @@ const Registration: NextPage = () => {
                       placeholder="Email"
                     />
                     {errors.email && (
-                      <Typography component="p">
-                        <ErrorMessage name="email" />
+                      <Typography sx={{ p: 0, fontSize: ".8em" }}>
+                        {errors.email}
                       </Typography>
                     )}
                     <TextField
@@ -120,10 +120,10 @@ const Registration: NextPage = () => {
                       type="text"
                       name="username"
                       placeholder="Username"
-                    />{" "}
+                    />
                     {errors.username && (
-                      <Typography component="p">
-                        <ErrorMessage name="username" />
+                      <Typography sx={{ p: 0, fontSize: ".8em" }}>
+                        {errors.username}
                       </Typography>
                     )}
                     <TextField
@@ -135,8 +135,8 @@ const Registration: NextPage = () => {
                       placeholder="Password"
                     />
                     {errors.password && (
-                      <Typography component="p">
-                        <ErrorMessage name="password" />
+                      <Typography sx={{ p: 0, fontSize: ".8em" }}>
+                        {errors.password}
                       </Typography>
                     )}
                     <Button type="submit">Register</Button>
