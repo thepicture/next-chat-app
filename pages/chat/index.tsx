@@ -30,7 +30,7 @@ const ChatContainerGrid = styled.div`
 const MessagesContainerGrid = styled.div`
   display: grid;
   height: 100%;
-  grid-template-rows: auto 1fr auto auto auto auto;
+  grid-template-rows: auto 1fr auto auto auto;
 `;
 
 const EmojiToggler = styled.div<{ isShowEmoji: boolean }>`
@@ -157,21 +157,32 @@ const ChatPage = () => {
       </Head>
       <ChatContainerGrid>
         <Box mt={1} mr={1} ml={1}>
-          <Card>
-            <Typography component="h1" variant="h4">
-              Chat
-            </Typography>
-            <Box textAlign="center">
-              <Button
-                onClick={() => {
-                  (socket as Socket).disconnect();
-                  signOut({
-                    callbackUrl: "/",
-                  });
-                }}
-              >
-                Logout
-              </Button>
+          <Card sx={{ p: 0 }}>
+            <Box display="flex" justifyContent="space-between">
+              <Typography alignSelf="center" component="h1" variant="h5">
+                Chat
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked
+                    onChange={(e) => setIsAutoscrollEnabled(e.target.checked)}
+                  />
+                }
+                label="Autoscroll"
+              />
+              <Box textAlign="center">
+                <Button
+                  onClick={() => {
+                    (socket as Socket).disconnect();
+                    signOut({
+                      callbackUrl: "/",
+                    });
+                  }}
+                >
+                  Logout
+                </Button>
+              </Box>
             </Box>
           </Card>
         </Box>
@@ -180,8 +191,8 @@ const ChatPage = () => {
             <Box>
               <Typography
                 component="h2"
-                variant="h4"
-                sx={{ textAlign: "inherit" }}
+                variant="h6"
+                sx={{ textAlign: "inherit", p: 0 }}
               >
                 Online users
               </Typography>
@@ -212,15 +223,6 @@ const ChatPage = () => {
               ))}
             </Box>
             <TypingList typers={typers} />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked
-                  onChange={(e) => setIsAutoscrollEnabled(e.target.checked)}
-                />
-              }
-              label="Autoscroll"
-            />
             <form onSubmit={handleSubmit}>
               <TextField
                 value={text}

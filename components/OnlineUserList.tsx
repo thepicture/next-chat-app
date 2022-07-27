@@ -9,12 +9,7 @@ const OnlineUserList = ({ onlineUsers }: OnlineUserListProps) => {
   return (
     <div>
       {onlineUsers.map((onlineUser) => (
-        <Typography
-          key={onlineUser}
-          component="h3"
-          variant="h6"
-          sx={{ textAlign: "inherit", pt: 0 }}
-        >
+        <Typography key={onlineUser} sx={{ textAlign: "inherit", p: 0 }}>
           {onlineUser}
         </Typography>
       ))}
