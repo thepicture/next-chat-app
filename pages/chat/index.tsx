@@ -20,6 +20,7 @@ import TypingList from "../../components/TypingList";
 import OnlineUserList from "../../components/OnlineUserList";
 import { IEmojiData } from "emoji-picker-react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 let socket: any;
 
 const ChatContainerGrid = styled.div`
@@ -47,20 +48,21 @@ const NoSSREmojiPicker = dynamic(() => import("emoji-picker-react"), {
 const TYPING_STOP_TIMEOUT_IN_MILLISECONDS = 2000;
 
 const ChatPage = () => {
+  const router = useRouter();
+  const ref = useRef<HTMLElement>();
   const { data: session, status } = useSession();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<MessageResponse[]>([]);
-  const ref = useRef<HTMLElement>();
   const [isAutoscrollEnabled, setIsAutoscrollEnabled] = useState(true);
   const [typers, setTypers] = useState<string[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [isShowEmoji, setIsShowEmoji] = useState(false);
   useEffect(() => {
     if (status === "loading") return;
-    if (status === "unauthenticated")
-      signOut({
-        callbackUrl: "/",
-      });
+    if (status === "unauthenticated") {
+      signOut({ redirect: false });
+      router.push("/auth/credentials-signin");
+    }
     if (socket) return;
 
     const initializeSocket = async () => {
@@ -114,15 +116,14 @@ const ChatPage = () => {
           prev.filter((onlineUser) => onlineUser != disconnectedUser.email)
         );
       });
-      socket.on("expired", () =>
-        signOut({
-          callbackUrl: "/",
-        })
-      );
+      socket.on("expired", () => {
+        signOut({ redirect: false });
+        router.push("/auth/credentials-signin");
+      });
     };
 
     initializeSocket();
-  }, [status]);
+  }, [status, session]);
   useEffect(() => {
     if (isAutoscrollEnabled) ref.current!.scrollTop = ref.current!.scrollHeight;
   }, [messages.length, isAutoscrollEnabled]);
@@ -184,9 +185,8 @@ const ChatPage = () => {
                 <Button
                   onClick={() => {
                     (socket as Socket).disconnect();
-                    signOut({
-                      callbackUrl: "/",
-                    });
+                    signOut({ redirect: false });
+                    router.push("/auth/credentials-signin");
                   }}
                 >
                   Logout
@@ -213,23 +213,24 @@ const ChatPage = () => {
               display="flex"
               flexDirection="column"
             >
-              {messages.map((message) => (
-                <Message
-                  key={message.id}
-                  isMe={
-                    (session!.user as { email: string })!.email ===
-                    message.email
-                  }
-                  email={message.email}
-                  side={
-                    (session!.user as { email: string })!.email ===
-                    message.email
-                      ? "right"
-                      : "left"
-                  }
-                  text={message.text}
-                />
-              ))}
+              {session &&
+                messages.map((message) => (
+                  <Message
+                    key={message.id}
+                    isMe={
+                      (session!.user as { email: string })!.email ===
+                      message.email
+                    }
+                    email={message.email}
+                    side={
+                      (session!.user as { email: string })!.email ===
+                      message.email
+                        ? "right"
+                        : "left"
+                    }
+                    text={message.text}
+                  />
+                ))}
             </Box>
             <TypingList typers={typers} />
             <form onSubmit={handleSubmit}>

@@ -8,6 +8,7 @@ export default NextAuth({
     },
     pages: {
         signIn: '/auth/credentials-signin',
+        signOut: '/auth/credentials-signin',
     },
     providers: [
         CredentialsProvider({
