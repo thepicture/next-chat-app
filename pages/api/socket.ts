@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
+
 import { Server } from "socket.io";
-import seed from "../../db/db";
+
 // @ts-ignore
-import Database from "sqlite-async";
+import { Database } from "sqlite-async";
+
 import { getToken } from "next-auth/jwt";
+
+import seed from "../../db/db";
 
 let onlineUserEmails: string[] = [];
 

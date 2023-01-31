@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const Database = require('sqlite-async')
+/// @ts-ignore
+import { Database } from 'sqlite-async'
+
 import seed from './../../db/db'
 
 export default async function handler(

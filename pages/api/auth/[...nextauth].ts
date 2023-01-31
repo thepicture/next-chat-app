@@ -1,7 +1,12 @@
 import NextAuth from "next-auth"
+
 import CredentialsProvider from "next-auth/providers/credentials"
-const Database = require('sqlite-async')
+
+/// @ts-ignore
+import { Database } from "sqlite-async";
+
 import seed from './../../../db/db'
+
 export default NextAuth({
     jwt: {
         maxAge: parseInt(process.env.SESSION_EXPIRES_IN_MILLISECONDS!) / 1000
